@@ -333,8 +333,8 @@
    - OBS: no preview aqui do Claude, link externo de imagem não carrega
      (só data URI). No seu próprio site/hospedagem, link normal funciona.
    ===================================================================== */
-var BRAND_LOGO = "Sharingan.png";   // <-- sua logo (cabeçalho, herói e rodapé)
-var HERO_BG    = "itachi.png";   // <-- sua imagem de fundo do topo
+var BRAND_LOGO = "sharingan.png";   // <-- sua logo (cabeçalho, herói e rodapé)
+var HERO_BG    = "itachi.png";      // <-- sua imagem de fundo do topo
 
 /* ===== Pix / produtos (edite se precisar) ===== */
 var PIX = {
@@ -387,13 +387,23 @@ var _heroSVG =
 "</g></svg>";
 
 function svgURI(s){ return "data:image/svg+xml,"+encodeURIComponent(s); }
-var logoSrc = BRAND_LOGO || svgURI(_logoSVG);
-var heroSrc = HERO_BG    || svgURI(_heroSVG);
+var _defLogo = svgURI(_logoSVG), _defHero = svgURI(_heroSVG);
+var logoSrc = BRAND_LOGO || _defLogo;
+var heroSrc = HERO_BG    || _defHero;
 
-document.getElementById("brandLogo").src = logoSrc;
-document.getElementById("heroLogo").src  = logoSrc;
-document.getElementById("footLogo").src  = logoSrc;
-document.getElementById("heroBg").style.backgroundImage = 'url("'+heroSrc+'")';
+/* usa a sua imagem; se o arquivo nao existir na pasta, cai na arte original */
+function setLogo(id){
+  var el=document.getElementById(id);
+  el.onerror=function(){ el.onerror=null; el.src=_defLogo; };
+  el.src=logoSrc;
+}
+setLogo("brandLogo"); setLogo("heroLogo"); setLogo("footLogo");
+(function(){
+  var probe=new Image();
+  probe.onload=function(){ document.getElementById("heroBg").style.backgroundImage='url("'+heroSrc+'")'; };
+  probe.onerror=function(){ document.getElementById("heroBg").style.backgroundImage='url("'+_defHero+'")'; };
+  probe.src=heroSrc;
+})();
 
 /* ===== Pix "copia e cola" (EMV / BR Code) ===== */
 function emv(id,val){ var l=(""+val).length.toString().padStart(2,"0"); return id+l+val; }
@@ -452,12 +462,22 @@ document.getElementById("cartItems").addEventListener("click", function(e){
 
 /* ===== Pix modal ===== */
 function openPix(){
-  var tv = totalValue(); if(tv<=0){ return; }
+  var tv = totalValue();
+  if(tv<=0){ renderCart(); openCart(); return; }
   var code = pixPayload(tv);
   document.getElementById("pixVal").textContent = brl(tv);
   document.getElementById("pixCode").value = code;
   var box = document.getElementById("qrbox"); box.innerHTML="";
-  new QRCode(box, { text: code, width:200, height:200, colorDark:"#000", colorLight:"#fff", correctLevel: QRCode.CorrectLevel.M });
+  /* abre a janela SEMPRE; se a lib do QR nao carregar (ex: sem internet), mostra so o copia e cola */
+  try{
+    if(typeof QRCode !== "undefined"){
+      new QRCode(box, { text: code, width:200, height:200, colorDark:"#000", colorLight:"#fff", correctLevel: QRCode.CorrectLevel.M });
+    } else {
+      box.innerHTML = '<div style="color:#000;font-size:.82rem;text-align:center;padding:10px;line-height:1.4">QR Code indisponivel sem internet.<br>Use o <b>Pix copia e cola</b> abaixo.</div>';
+    }
+  }catch(e){
+    box.innerHTML = '<div style="color:#000;font-size:.82rem;text-align:center;padding:10px;line-height:1.4">Nao foi possivel gerar o QR.<br>Use o <b>Pix copia e cola</b> abaixo.</div>';
+  }
   closeCart();
   document.getElementById("pixModal").hidden=false; document.getElementById("pixScrim").hidden=false;
 }
