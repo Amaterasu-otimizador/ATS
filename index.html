@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amaterasu Otimizador</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Barlow:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap">
+<style>
+  /* Layout: loja dark "forja/brasa" — herói com imagem de fundo (trocável), planos lado a lado, recursos, contato, rodapé; carrinho e Pix em overlays */
+  :root{
+    --bg:#000000; --bg2:#080404; --surface:#120707; --surface2:#180a0a;
+    --line:#2c0d0d; --fg:#f6ecec; --muted:#b08a8a; --faint:#6f5252;
+    --blood:#fe0a03; --blood-deep:#9c0502; --ember:#ff5a2a; --gold:#f2b14a;
+    --ok:#36c26b;
+    --ff-disp:"Cinzel",Georgia,serif; --ff-body:"Barlow",system-ui,sans-serif; --ff-num:"Rajdhani",system-ui,sans-serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:var(--ff-body); background:var(--bg); color:var(--fg);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(1000px 560px at 78% -12%, rgba(254,10,3,.26), transparent 60%),
+      radial-gradient(760px 520px at -12% 8%, rgba(255,90,42,.10), transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding-left:max(18px,env(safe-area-inset-left,0px)); padding-right:max(18px,env(safe-area-inset-right,0px))}
+  a{color:inherit}
+  h1,h2,h3{font-family:var(--ff-disp); font-weight:900; text-wrap:balance; margin:0; letter-spacing:.5px}
+  .eyebrow{font-family:var(--ff-num); text-transform:uppercase; letter-spacing:3px; font-size:.78rem; color:var(--ember); font-weight:700}
+  img{display:block; max-width:100%}
+
+  body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); background:var(--bg); z-index:60}
+  header.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:50; background:rgba(0,0,0,.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+  .nav-in{display:flex; align-items:center; gap:18px; padding-block:12px}
+  .brand{display:flex; align-items:center; gap:11px; text-decoration:none; margin-right:auto}
+  .brand .mark{width:42px; height:42px; flex:0 0 auto; object-fit:contain; filter:drop-shadow(0 0 10px rgba(254,10,3,.6))}
+  .brand b{font-family:var(--ff-disp); font-size:1.25rem; letter-spacing:2px; line-height:1}
+  .brand .tx{display:block; line-height:1}
+  .brand .tx small{display:block; font-family:var(--ff-num); font-size:.62rem; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-top:3px}
+  nav.links{display:flex; gap:22px}
+  nav.links a{text-decoration:none; color:var(--muted); font-weight:600; font-size:.95rem}
+  nav.links a:hover{color:var(--fg)}
+  .cart-btn{display:inline-flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); color:var(--fg);
+    padding:9px 14px; border-radius:11px; cursor:pointer; font-family:var(--ff-body); font-weight:600; font-size:.92rem}
+  .cart-btn:hover{border-color:var(--blood)}
+  .cart-count{font-family:var(--ff-num); font-weight:700; background:var(--blood); color:#fff; border-radius:999px; min-width:21px; height:21px;
+    display:inline-grid; place-items:center; font-size:.8rem; padding:0 5px}
+
+  /* hero com imagem de fundo + scrim */
+  .hero{position:relative; overflow:hidden; isolation:isolate; padding:66px 26px 46px; text-align:center; border:1px solid var(--line); border-radius:20px; margin-top:22px}
+  .hero .hbg{position:absolute; inset:0; z-index:-3; background-position:center; background-size:cover; background-repeat:no-repeat; opacity:.6}
+  .hero::after{content:""; position:absolute; inset:0; z-index:-2; background:linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,.86))}
+  .hero::before{content:""; position:absolute; inset:-30% -20% auto; height:120%; z-index:-1; pointer-events:none; background:radial-gradient(58% 55% at 50% 30%, rgba(254,10,3,.32), rgba(254,10,3,.07) 46%, transparent 72%)}
+  .hero .sigil{width:122px; height:122px; margin:0 auto 18px; object-fit:contain; filter:drop-shadow(0 0 28px rgba(254,10,3,.7))}
+  .hero h1{font-size:clamp(2.6rem,7vw,4.8rem); line-height:.98; background:linear-gradient(180deg,#fff, #ffd9c2 40%, var(--ember)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .hero p.lead{max-width:48ch; margin:16px auto 0; color:#e8d5d5; font-size:1.12rem}
+  .hero .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:26px}
+  .btn{font-family:var(--ff-body); font-weight:700; border-radius:12px; padding:13px 22px; cursor:pointer; border:1px solid transparent; font-size:1rem; text-decoration:none; display:inline-flex; align-items:center; gap:9px}
+  .btn-primary{background:linear-gradient(180deg,var(--blood),var(--blood-deep)); color:#fff; box-shadow:0 10px 30px -10px rgba(254,10,3,.85)}
+  .btn-primary:hover{filter:brightness(1.08)}
+  .btn-ghost{background:rgba(0,0,0,.35); border-color:var(--line); color:var(--fg)}
+  .btn-ghost:hover{border-color:var(--ember); color:var(--ember)}
+  .trust{display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-top:26px; color:#c9b2b2; font-size:.86rem; font-weight:600}
+  .trust b{color:#fff}
+
+  section{padding-block:46px}
+  .sec-head{text-align:center; margin-bottom:30px}
+  .sec-head h2{font-size:clamp(1.8rem,4.5vw,2.6rem); margin-top:8px}
+
+  .plans{display:grid; grid-template-columns:repeat(2,1fr); gap:20px}
+  .plan{position:relative; background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:18px; padding:26px 24px; display:flex; flex-direction:column}
+  .plan.pro{border-color:var(--blood); box-shadow:0 0 0 1px rgba(254,10,3,.4), 0 20px 50px -24px rgba(254,10,3,.65)}
+  .flag{position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:linear-gradient(180deg,var(--ember),var(--blood)); color:#fff; font-family:var(--ff-num); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; font-size:.72rem; padding:5px 14px; border-radius:999px; white-space:nowrap}
+  .plan h3{font-size:1.5rem}
+  .plan .tag{color:var(--muted); font-size:.92rem; margin:4px 0 16px}
+  .price{font-family:var(--ff-num); line-height:1; display:flex; align-items:baseline; gap:6px}
+  .price .old{color:var(--faint); text-decoration:line-through; font-size:1rem; font-weight:600}
+  .price .cur{color:var(--muted); font-weight:600; font-size:1.1rem; align-self:flex-start; margin-top:4px}
+  .price .val{font-size:2.9rem; font-weight:700; color:#fff}
+  .price .cents{font-size:1.3rem; font-weight:700; color:#fff}
+  .feat{list-style:none; padding:0; margin:18px 0 22px; display:flex; flex-direction:column; gap:10px}
+  .feat li{display:flex; gap:10px; align-items:flex-start; font-size:.96rem; color:var(--fg)}
+  .feat li svg{flex:0 0 auto; margin-top:3px}
+  .feat li.off{color:var(--faint)}
+  .plan .btn{margin-top:auto; justify-content:center; width:100%}
+
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px}
+  .card .ic{width:34px; height:34px; color:var(--ember); margin-bottom:10px}
+  .card h3{font-family:var(--ff-body); font-weight:700; font-size:1.06rem; margin-bottom:5px}
+  .card p{margin:0; color:var(--muted); font-size:.92rem}
+
+  .contact{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .ct{background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:14px; padding:22px; text-align:center}
+  .ct .ic{width:30px; height:30px; margin:0 auto 10px}
+  .ct h3{font-family:var(--ff-body); font-weight:700; font-size:1.05rem}
+  .ct .v{font-family:var(--ff-num); font-weight:600; color:var(--ember); margin-top:6px; word-break:break-word; font-size:1.02rem}
+  .ct a.v{text-decoration:none}
+
+  footer{border-top:1px solid var(--line); background:var(--bg2); margin-top:30px}
+  .foot{display:flex; gap:26px; flex-wrap:wrap; justify-content:space-between; padding-block:34px}
+  .foot .mark{width:38px; height:38px; object-fit:contain; filter:drop-shadow(0 0 8px rgba(254,10,3,.55))}
+  .foot .brand b{font-size:1.1rem}
+  .foot p{color:var(--faint); font-size:.86rem; max-width:40ch; margin:10px 0 0}
+  .foot nav{display:flex; flex-direction:column; gap:8px}
+  .foot nav a{color:var(--muted); text-decoration:none; font-size:.9rem}
+  .foot nav a:hover{color:var(--fg)}
+  .copy{border-top:1px solid var(--line); padding-block:16px; color:var(--faint); font-size:.8rem; text-align:center}
+
+  .scrim{position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(3px); z-index:80}
+  .drawer{position:fixed; top:0; right:0; bottom:0; width:min(400px,92vw); background:var(--bg2); border-left:1px solid var(--line); z-index:90; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top,0px)}
+  .drawer h2{font-size:1.3rem; padding:20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between}
+  .x{background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; line-height:1}
+  .x:hover{color:var(--fg)}
+  .items{flex:1; overflow:auto; padding:16px; display:flex; flex-direction:column; gap:12px}
+  .empty{color:var(--faint); text-align:center; margin-top:40px; font-size:.95rem}
+  .ci{display:flex; gap:12px; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px}
+  .ci .nm{font-weight:600; font-size:.98rem}
+  .ci .pr{font-family:var(--ff-num); color:var(--muted); font-size:.9rem}
+  .qty{display:flex; align-items:center; gap:8px; margin-left:auto}
+  .qty button{width:28px; height:28px; border-radius:8px; border:1px solid var(--line); background:var(--surface2); color:var(--fg); cursor:pointer; font-size:1.1rem; line-height:1}
+  .qty button:hover{border-color:var(--blood)}
+  .qty span{font-family:var(--ff-num); font-weight:700; min-width:18px; text-align:center}
+  .drawer .tot{padding:18px 20px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:14px}
+  .tot .row{display:flex; justify-content:space-between; align-items:baseline}
+  .tot .row .big{font-family:var(--ff-num); font-weight:700; font-size:1.9rem; color:#fff}
+  .tot small{color:var(--faint)}
+
+  .modal{position:fixed; inset:0; z-index:90; display:grid; place-items:center; padding:18px; overflow:auto}
+  .pixcard{background:var(--bg2); border:1px solid var(--line); border-radius:18px; max-width:460px; width:100%; padding:26px; box-shadow:0 30px 80px -20px #000}
+  .pixcard h2{font-size:1.5rem; text-align:center}
+  .pixcard .sub{text-align:center; color:var(--muted); font-size:.92rem; margin:6px 0 18px}
+  #qrbox{width:224px; height:224px; margin:0 auto; background:#fff; padding:12px; border-radius:12px; display:grid; place-items:center}
+  #qrbox img{display:block}
+  .pixval{font-family:var(--ff-num); font-weight:700; font-size:2.1rem; color:#fff; text-align:center; margin:16px 0 4px}
+  .pixval small{font-size:1rem; color:var(--muted)}
+  .copybox{display:flex; gap:8px; margin-top:14px}
+  .copybox input{flex:1; min-width:0; background:var(--surface); border:1px solid var(--line); color:var(--muted); border-radius:10px; padding:11px 12px; font-family:var(--ff-num); font-size:.82rem}
+  .copybox button{white-space:nowrap}
+  .steps{list-style:none; padding:0; margin:18px 0 0; display:flex; flex-direction:column; gap:9px; counter-reset:s}
+  .steps li{display:flex; gap:11px; align-items:flex-start; color:var(--muted); font-size:.9rem}
+  .steps li::before{counter-increment:s; content:counter(s); flex:0 0 auto; width:22px; height:22px; border-radius:999px; background:var(--blood); color:#fff; font-family:var(--ff-num); font-weight:700; font-size:.8rem; display:grid; place-items:center; margin-top:1px}
+  .note{background:rgba(242,177,74,.08); border:1px solid rgba(242,177,74,.3); color:var(--gold); border-radius:10px; padding:11px 13px; font-size:.84rem; margin-top:16px}
+
+  @media (max-width:760px){
+    nav.links{display:none}
+    .plans{grid-template-columns:1fr}
+    .grid3{grid-template-columns:1fr}
+    .contact{grid-template-columns:1fr}
+    .hero{padding:46px 18px 32px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#topo">
+      <img class="mark" id="brandLogo" alt="Amaterasu">
+      <span class="tx"><b>AMATERASU</b><small>OTIMIZADOR</small></span>
+    </a>
+    <nav class="links">
+      <a href="#planos">Planos</a>
+      <a href="#recursos">O que faz</a>
+      <a href="#suporte">Suporte</a>
+    </nav>
+    <button class="cart-btn" id="openCart" aria-label="Abrir carrinho">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.4 12.4a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L22 7H6"/></svg>
+      Carrinho <span class="cart-count" id="cc">0</span>
+    </button>
+  </div>
+</header>
+
+<a id="topo"></a>
+<div class="wrap">
+  <section class="hero">
+    <div class="hbg" id="heroBg"></div>
+    <img class="sigil" id="heroLogo" alt="">
+    <p class="eyebrow">Queime o lixo do seu PC</p>
+    <h1>AMATERASU</h1>
+    <p class="lead">O otimizador que deixa seu PC leve e destrava FPS nos jogos. Feito para PC fraco — limpa, acelera e prioriza o que importa, sem mexer na configuração dos jogos.</p>
+    <div class="cta">
+      <a href="#planos" class="btn btn-primary">Ver planos</a>
+      <a href="#recursos" class="btn btn-ghost">Como funciona</a>
+    </div>
+    <div class="trust">
+      <span>⚡ Entrega <b>na hora</b></span>
+      <span>↺ <b>100% reversível</b></span>
+      <span>🛡️ Não mexe nos jogos</span>
+      <span>💳 Pagamento via <b>Pix</b></span>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section id="planos">
+    <div class="sec-head"><p class="eyebrow">Escolha seu plano</p><h2>Dois jeitos de acelerar</h2></div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Básico</h3>
+        <p class="tag">Pra quem quer um clique e pronto.</p>
+        <div class="price"><span class="cur">R$</span><span class="val">39</span><span class="cents">,90</span></div>
+        <ul class="feat">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> Painel de 1 clique "Otimizar agora"</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> FPS Booster (mínimo / médio / máximo)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> Limpeza + plano de energia + Game Mode</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> Modo automático em segundo plano</li>
+          <li class="off"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6f5252" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg> Painel Avançado (41 ajustes)</li>
+        </ul>
+        <button class="btn btn-ghost add" data-id="basico">Adicionar ao carrinho</button>
+      </div>
+      <div class="plan pro">
+        <span class="flag">⭐ Mais vendido</span>
+        <h3>PRO</h3>
+        <p class="tag">O pacote completo, com suporte prioritário.</p>
+        <div class="price"><span class="old">R$ 97,90</span></div>
+        <div class="price"><span class="cur">R$</span><span class="val">59</span><span class="cents">,90</span></div>
+        <ul class="feat">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> <b>Tudo do Básico</b></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> Painel Avançado: 41 ajustes selecionáveis</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> Serviços, apps, inicialização, rede/DNS</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> Reparo do Windows (SFC + DISM)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#36c26b" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg> Suporte prioritário</li>
+        </ul>
+        <button class="btn btn-primary add" data-id="pro">Adicionar ao carrinho</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section id="recursos">
+    <div class="sec-head"><p class="eyebrow">O que ele faz</p><h2>Mais FPS, menos travada</h2></div>
+    <div class="grid3">
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h12"/></svg><h3>Limpa o lixo</h3><p>Remove temporários, cache e arquivos inúteis que deixam o PC pesado.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg><h3>Acelera o sistema</h3><p>Plano de energia máximo, efeitos desligados e serviços inúteis cortados.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4"/><circle cx="17" cy="11" r="1"/><circle cx="15" cy="14" r="1"/></svg><h3>Foco nos jogos</h3><p>Game Mode, GPU priorizada e menos processos roubando desempenho.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12a7 7 0 0 1 14 0M8.5 12a3.5 3.5 0 0 1 7 0M12 12v6"/></svg><h3>Melhora o ping</h3><p>Ajustes de rede e DNS que reduzem a latência em jogos online.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3"/></svg><h3>Inicialização enxuta</h3><p>Controla o que abre junto com o Windows pra ligar mais rápido.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><h3>Seguro e reversível</h3><p>Cria ponto de restauração antes. Não toca na configuração dos jogos.</p></div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <section id="suporte">
+    <div class="sec-head"><p class="eyebrow">Precisa de ajuda?</p><h2>Fale com a gente</h2></div>
+    <div class="contact">
+      <div class="ct">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path d="M8.5 8.5c0 4 3 7 7 7" stroke-linecap="round"/></svg>
+        <h3>WhatsApp</h3>
+        <a class="v" id="waLink" href="https://wa.me/5532900000000" target="_blank" rel="noopener">+55 32 90000-0000</a>
+      </div>
+      <div class="ct">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#5865F2" stroke-width="2"><path d="M4 5h16c1 0 2 1 2 2v9c0 1-1 2-2 2H8l-4 4V7c0-1 1-2 2-2z"/></svg>
+        <h3>Discord</h3>
+        <a class="v" id="dcLink" href="https://discord.gg/seuservidor" target="_blank" rel="noopener">discord.gg/seuservidor</a>
+      </div>
+      <div class="ct">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#ff5a2a" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        <h3>E-mail</h3>
+        <div class="v" id="mail">suporte@amaterasu.com.br</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a class="brand" href="#topo" style="margin:0">
+        <img class="mark" id="footLogo" alt="Amaterasu">
+        <span class="tx"><b>AMATERASU</b><small>OTIMIZADOR</small></span>
+      </a>
+      <p>Otimizador de PC para jogos. Produto digital — entrega por download. Compatível com Windows 10 e 11.</p>
+    </div>
+    <nav>
+      <strong style="color:var(--fg); font-family:var(--ff-disp)">Loja</strong>
+      <a href="#planos">Planos e preços</a>
+      <a href="#recursos">O que faz</a>
+      <a href="#suporte">Suporte</a>
+    </nav>
+    <nav>
+      <strong style="color:var(--fg); font-family:var(--ff-disp)">Legal</strong>
+      <a href="#suporte">Trocas e reembolso</a>
+      <a href="#suporte">Termos de uso</a>
+      <a href="#suporte">Privacidade</a>
+    </nav>
+  </div>
+  <div class="copy">© <span id="yr"></span> Amaterasu Otimizador · Muriaé, MG · Todos os direitos reservados</div>
+</footer>
+
+<div id="cartScrim" class="scrim" hidden></div>
+<aside id="cart" class="drawer" hidden aria-label="Carrinho">
+  <h2>Seu carrinho <button class="x" id="closeCart" aria-label="Fechar">&times;</button></h2>
+  <div class="items" id="cartItems"></div>
+  <div class="tot">
+    <div class="row"><span>Total</span><span class="big" id="cartTotal">R$ 0,00</span></div>
+    <button class="btn btn-primary" id="checkout" style="justify-content:center; width:100%">Pagar com Pix</button>
+    <small>Pagamento via Pix (Mercado Pago). Entrega do link após a confirmação.</small>
+  </div>
+</aside>
+
+<div id="pixScrim" class="scrim" hidden></div>
+<div id="pixModal" class="modal" hidden>
+  <div class="pixcard">
+    <h2>Pagamento via Pix</h2>
+    <p class="sub">Escaneie o QR Code ou use o Pix copia e cola</p>
+    <div id="qrbox"></div>
+    <div class="pixval"><small>Total</small> <span id="pixVal">R$ 0,00</span></div>
+    <div class="copybox">
+      <input id="pixCode" readonly value="">
+      <button class="btn btn-ghost" id="copyPix">Copiar</button>
+    </div>
+    <ol class="steps">
+      <li>Abra o app do seu banco e escolha pagar com Pix (QR Code ou copia e cola).</li>
+      <li>Confirme o valor exato e finalize o pagamento.</li>
+      <li>Envie o comprovante no nosso WhatsApp ou Discord.</li>
+      <li>Você recebe o link de download na hora. ⚡</li>
+    </ol>
+    <div class="note">⚠️ Guarde o comprovante. A entrega do link é feita após a confirmação do pagamento pelo nosso atendimento.</div>
+    <button class="btn btn-ghost" id="closePix" style="width:100%; justify-content:center; margin-top:16px">Voltar</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   TROQUE AQUI PELA SUA ARTE (logo e fundo)
+   - Cole a URL da sua imagem (ex: "https://seusite.com/logo.png")
+     ou um data URI. Deixe "" para usar a arte padrão original.
+   - OBS: no preview aqui do Claude, link externo de imagem não carrega
+     (só data URI). No seu próprio site/hospedagem, link normal funciona.
+   ===================================================================== */
+var BRAND_LOGO = "Sharingan.png";   // <-- sua logo (cabeçalho, herói e rodapé)
+var HERO_BG    = "itachi.png";   // <-- sua imagem de fundo do topo
+
+/* ===== Pix / produtos (edite se precisar) ===== */
+var PIX = {
+  chave: "f512f51e-b6e1-4566-b55c-8e351dc5277a", // sua chave Pix (Mercado Pago)
+  nome:  "AMATERASU",      // max 25 caracteres, sem acento
+  cidade:"MURIAE"          // max 15 caracteres, sem acento
+};
+var PRODUTOS = {
+  basico: { nome:"Amaterasu Básico", preco:39.90 },
+  pro:    { nome:"Amaterasu PRO",    preco:59.90 }
+};
+
+/* ===== Arte padrão original (gerada) — olho em brasa + cenário de fogo ===== */
+var _logoSVG =
+"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>"+
+"<defs><radialGradient id='e' cx='50%' cy='50%' r='60%'>"+
+"<stop offset='0' stop-color='#ffe3b0'/><stop offset='.45' stop-color='#ff5a2a'/><stop offset='1' stop-color='#fe0a03'/>"+
+"</radialGradient></defs>"+
+"<circle cx='60' cy='60' r='54' fill='none' stroke='url(#e)' stroke-width='4'/>"+
+"<path d='M14 60 C36 32 84 32 106 60 C84 88 36 88 14 60 Z' fill='none' stroke='url(#e)' stroke-width='4'/>"+
+"<circle cx='60' cy='60' r='19' fill='#000'/>"+
+"<circle cx='60' cy='60' r='14' fill='url(#e)'/>"+
+"<circle cx='60' cy='60' r='5.5' fill='#000'/>"+
+"<path d='M60 4 L65 20 L55 20 Z' fill='url(#e)'/>"+
+"<path d='M60 116 L65 100 L55 100 Z' fill='url(#e)'/>"+
+"<path d='M4 60 L20 55 L20 65 Z' fill='url(#e)'/>"+
+"<path d='M116 60 L100 55 L100 65 Z' fill='url(#e)'/>"+
+"</svg>";
+
+var _heroSVG =
+"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'>"+
+"<defs>"+
+"<radialGradient id='g' cx='50%' cy='24%' r='72%'>"+
+"<stop offset='0' stop-color='#fe0a03' stop-opacity='.6'/>"+
+"<stop offset='.4' stop-color='#6a0402' stop-opacity='.4'/>"+
+"<stop offset='1' stop-color='#000' stop-opacity='0'/></radialGradient>"+
+"<linearGradient id='f' x1='0' y1='1' x2='0' y2='0'>"+
+"<stop offset='0' stop-color='#fe0a03'/><stop offset='1' stop-color='#fe0a03' stop-opacity='0'/></linearGradient>"+
+"</defs>"+
+"<rect width='1200' height='700' fill='#000'/>"+
+"<rect width='1200' height='700' fill='url(#g)'/>"+
+"<path d='M0 700 C150 560 180 630 300 560 C420 500 470 610 600 545 C760 470 790 610 900 560 C1020 515 1090 610 1200 560 L1200 700 Z' fill='url(#f)' opacity='.55'/>"+
+"<path d='M0 700 C120 605 230 655 360 600 C520 540 570 635 720 590 C880 545 970 645 1200 600 L1200 700 Z' fill='#000' opacity='.65'/>"+
+"<g fill='#ff6a33'>"+
+"<circle cx='220' cy='300' r='2.6' opacity='.85'/><circle cx='400' cy='220' r='2' opacity='.6'/>"+
+"<circle cx='620' cy='175' r='3' opacity='.75'/><circle cx='820' cy='260' r='2' opacity='.6'/>"+
+"<circle cx='980' cy='205' r='2.6' opacity='.7'/><circle cx='520' cy='345' r='1.8' opacity='.5'/>"+
+"<circle cx='720' cy='360' r='2.3' opacity='.6'/><circle cx='330' cy='430' r='1.7' opacity='.5'/>"+
+"<circle cx='880' cy='400' r='1.6' opacity='.45'/><circle cx='150' cy='250' r='1.8' opacity='.5'/>"+
+"</g></svg>";
+
+function svgURI(s){ return "data:image/svg+xml,"+encodeURIComponent(s); }
+var logoSrc = BRAND_LOGO || svgURI(_logoSVG);
+var heroSrc = HERO_BG    || svgURI(_heroSVG);
+
+document.getElementById("brandLogo").src = logoSrc;
+document.getElementById("heroLogo").src  = logoSrc;
+document.getElementById("footLogo").src  = logoSrc;
+document.getElementById("heroBg").style.backgroundImage = 'url("'+heroSrc+'")';
+
+/* ===== Pix "copia e cola" (EMV / BR Code) ===== */
+function emv(id,val){ var l=(""+val).length.toString().padStart(2,"0"); return id+l+val; }
+function crc16(s){
+  var crc=0xFFFF;
+  for(var i=0;i<s.length;i++){
+    crc ^= s.charCodeAt(i)<<8;
+    for(var j=0;j<8;j++){ crc = (crc&0x8000) ? ((crc<<1)^0x1021) : (crc<<1); crc &= 0xFFFF; }
+  }
+  return crc.toString(16).toUpperCase().padStart(4,"0");
+}
+function pixPayload(valor){
+  var nome = PIX.nome.substring(0,25), cidade = PIX.cidade.substring(0,15);
+  var txid = ("AMT"+Date.now().toString(36)).substring(0,25).toUpperCase();
+  var mai = emv("00","BR.GOV.BCB.PIX") + emv("01",PIX.chave);
+  var p = emv("00","01") + emv("26",mai) + emv("52","0000") + emv("53","986") +
+          emv("54", valor.toFixed(2)) + emv("58","BR") + emv("59",nome) + emv("60",cidade) +
+          emv("62", emv("05",txid)) + "6304";
+  return p + crc16(p);
+}
+
+/* ===== Carrinho ===== */
+var cart = {};
+try{ var saved = localStorage.getItem("amaterasu_cart"); if(saved) cart = JSON.parse(saved)||{}; }catch(e){}
+function persist(){ try{ localStorage.setItem("amaterasu_cart", JSON.stringify(cart)); }catch(e){} }
+function brl(n){ return "R$ " + n.toFixed(2).replace(".",","); }
+function totalCount(){ var n=0; for(var k in cart) n+=cart[k]; return n; }
+function totalValue(){ var t=0; for(var k in cart) t += PRODUTOS[k].preco*cart[k]; return t; }
+function renderCart(){
+  var wrap = document.getElementById("cartItems"); wrap.innerHTML="";
+  var keys = Object.keys(cart).filter(function(k){return cart[k]>0;});
+  if(keys.length===0){ wrap.innerHTML = '<p class="empty">Seu carrinho está vazio.<br>Escolha um plano acima. ⛩️</p>'; }
+  keys.forEach(function(k){
+    var p = PRODUTOS[k];
+    var el = document.createElement("div"); el.className="ci";
+    el.innerHTML = '<div><div class="nm">'+p.nome+'</div><div class="pr">'+brl(p.preco)+'</div></div>'+
+      '<div class="qty"><button data-m="'+k+'">&minus;</button><span>'+cart[k]+'</span><button data-p="'+k+'">+</button></div>';
+    wrap.appendChild(el);
+  });
+  document.getElementById("cc").textContent = totalCount();
+  document.getElementById("cartTotal").textContent = brl(totalValue());
+}
+function addItem(k){ cart[k] = (cart[k]||0)+1; persist(); renderCart(); openCart(); }
+function openCart(){ document.getElementById("cart").hidden=false; document.getElementById("cartScrim").hidden=false; }
+function closeCart(){ document.getElementById("cart").hidden=true; document.getElementById("cartScrim").hidden=true; }
+
+document.querySelectorAll(".add").forEach(function(b){ b.addEventListener("click", function(){ addItem(b.getAttribute("data-id")); }); });
+document.getElementById("openCart").addEventListener("click", function(){ renderCart(); openCart(); });
+document.getElementById("closeCart").addEventListener("click", closeCart);
+document.getElementById("cartScrim").addEventListener("click", closeCart);
+document.getElementById("cartItems").addEventListener("click", function(e){
+  var t=e.target;
+  if(t.getAttribute("data-p")){ cart[t.getAttribute("data-p")]++; persist(); renderCart(); }
+  else if(t.getAttribute("data-m")){ var k=t.getAttribute("data-m"); cart[k]=Math.max(0,cart[k]-1); if(cart[k]===0) delete cart[k]; persist(); renderCart(); }
+});
+
+/* ===== Pix modal ===== */
+function openPix(){
+  var tv = totalValue(); if(tv<=0){ return; }
+  var code = pixPayload(tv);
+  document.getElementById("pixVal").textContent = brl(tv);
+  document.getElementById("pixCode").value = code;
+  var box = document.getElementById("qrbox"); box.innerHTML="";
+  new QRCode(box, { text: code, width:200, height:200, colorDark:"#000", colorLight:"#fff", correctLevel: QRCode.CorrectLevel.M });
+  closeCart();
+  document.getElementById("pixModal").hidden=false; document.getElementById("pixScrim").hidden=false;
+}
+function closePix(){ document.getElementById("pixModal").hidden=true; document.getElementById("pixScrim").hidden=true; }
+document.getElementById("checkout").addEventListener("click", openPix);
+document.getElementById("closePix").addEventListener("click", closePix);
+document.getElementById("pixScrim").addEventListener("click", closePix);
+document.getElementById("copyPix").addEventListener("click", function(){
+  var inp = document.getElementById("pixCode"), btn = this;
+  function done(){ btn.textContent="Copiado!"; setTimeout(function(){ btn.textContent="Copiar"; },1600); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(inp.value).then(done, function(){ inp.select(); try{document.execCommand("copy");}catch(e){} done(); });
+  } else { inp.select(); try{document.execCommand("copy");}catch(e){} done(); }
+});
+
+document.getElementById("yr").textContent = new Date().getFullYear();
+renderCart();
+</script>
+</body>
+</html>
