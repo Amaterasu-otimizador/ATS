@@ -27,7 +27,7 @@
       radial-gradient(760px 520px at -12% 8%, rgba(255,90,42,.10), transparent 55%);
     background-attachment:fixed;
   }
-  .wrap{max-width:1100px; margin:0 auto; padding-left:max(18px,env(safe-area-inset-left,0px)); padding-right:max(18px,env(safe-area-inset-right,0px))}
+  .wrap{max-width:1680px; width:100%; margin:0 auto; padding-left:max(clamp(18px,4vw,64px),env(safe-area-inset-left,0px)); padding-right:max(clamp(18px,4vw,64px),env(safe-area-inset-right,0px))}
   a{color:inherit}
   h1,h2,h3{font-family:var(--ff-disp); font-weight:900; text-wrap:balance; margin:0; letter-spacing:.5px}
   .eyebrow{font-family:var(--ff-num); text-transform:uppercase; letter-spacing:3px; font-size:.78rem; color:var(--ember); font-weight:700}
@@ -51,14 +51,17 @@
     display:inline-grid; place-items:center; font-size:.8rem; padding:0 5px}
 
   /* hero com imagem de fundo + scrim */
-  .hero{position:relative; overflow:hidden; isolation:isolate; padding:66px 26px 46px; text-align:center; border:1px solid var(--line); border-radius:20px; margin-top:22px}
-  .hero .hbg{position:absolute; inset:0; z-index:-3; background-position:center; background-size:cover; background-repeat:no-repeat; opacity:.6}
+  .hero{position:relative; overflow:hidden; isolation:isolate; width:100%; display:flex; align-items:center; text-align:center; border-bottom:1px solid var(--line);
+    padding-block:clamp(56px,10vh,120px); min-height:min(calc(100vh - 66px),900px)}
+  .hero-in{width:100%}
+  .hero .hbg{position:absolute; inset:0; z-index:-3; background-position:center top; background-size:cover; background-repeat:no-repeat; opacity:.62}
   .hero::after{content:""; position:absolute; inset:0; z-index:-2; background:linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,.86))}
   .hero::before{content:""; position:absolute; inset:-30% -20% auto; height:120%; z-index:-1; pointer-events:none; background:radial-gradient(58% 55% at 50% 30%, rgba(254,10,3,.32), rgba(254,10,3,.07) 46%, transparent 72%)}
-  .hero .sigil{width:122px; height:122px; margin:0 auto 18px; object-fit:contain; filter:drop-shadow(0 0 28px rgba(254,10,3,.7))}
-  .hero h1{font-size:clamp(2.6rem,7vw,4.8rem); line-height:.98; background:linear-gradient(180deg,#fff, #ffd9c2 40%, var(--ember)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .hero p.lead{max-width:48ch; margin:16px auto 0; color:#e8d5d5; font-size:1.12rem}
-  .hero .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:26px}
+  .hero .sigil{width:clamp(110px,12vw,170px); height:clamp(110px,12vw,170px); margin:0 auto 18px; object-fit:contain; filter:drop-shadow(0 0 28px rgba(254,10,3,.7))}
+  .hero h1{font-size:clamp(2.8rem,8vw,7rem); line-height:.98; background:linear-gradient(180deg,#fff, #ffd9c2 40%, var(--ember)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .hero p.lead{max-width:60ch; margin:18px auto 0; color:#e8d5d5; font-size:clamp(1.05rem,1.5vw,1.3rem)}
+  .hero .cta{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:30px}
+  .hero .btn{padding:15px 28px; font-size:1.05rem}
   .btn{font-family:var(--ff-body); font-weight:700; border-radius:12px; padding:13px 22px; cursor:pointer; border:1px solid transparent; font-size:1rem; text-decoration:none; display:inline-flex; align-items:center; gap:9px}
   .btn-primary{background:linear-gradient(180deg,var(--blood),var(--blood-deep)); color:#fff; box-shadow:0 10px 30px -10px rgba(254,10,3,.85)}
   .btn-primary:hover{filter:brightness(1.08)}
@@ -67,12 +70,13 @@
   .trust{display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-top:26px; color:#c9b2b2; font-size:.86rem; font-weight:600}
   .trust b{color:#fff}
 
-  section{padding-block:46px}
-  .sec-head{text-align:center; margin-bottom:30px}
-  .sec-head h2{font-size:clamp(1.8rem,4.5vw,2.6rem); margin-top:8px}
+  section.band{padding-block:clamp(56px,9vh,110px)}
+  section.band.alt{background:linear-gradient(180deg,var(--bg2),var(--bg)); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+  .sec-head{text-align:center; margin-bottom:clamp(30px,5vh,56px)}
+  .sec-head h2{font-size:clamp(1.9rem,4vw,3.2rem); margin-top:8px}
 
-  .plans{display:grid; grid-template-columns:repeat(2,1fr); gap:20px}
-  .plan{position:relative; background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:18px; padding:26px 24px; display:flex; flex-direction:column}
+  .plans{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(20px,3vw,40px)}
+  .plan{position:relative; background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:20px; padding:clamp(26px,3vw,44px); display:flex; flex-direction:column}
   .plan.pro{border-color:var(--blood); box-shadow:0 0 0 1px rgba(254,10,3,.4), 0 20px 50px -24px rgba(254,10,3,.65)}
   .flag{position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:linear-gradient(180deg,var(--ember),var(--blood)); color:#fff; font-family:var(--ff-num); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; font-size:.72rem; padding:5px 14px; border-radius:999px; white-space:nowrap}
   .plan h3{font-size:1.5rem}
@@ -88,14 +92,14 @@
   .feat li.off{color:var(--faint)}
   .plan .btn{margin-top:auto; justify-content:center; width:100%}
 
-  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
-  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px}
+  .grid3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(16px,2vw,28px)}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:clamp(20px,2.4vw,32px)}
   .card .ic{width:34px; height:34px; color:var(--ember); margin-bottom:10px}
   .card h3{font-family:var(--ff-body); font-weight:700; font-size:1.06rem; margin-bottom:5px}
   .card p{margin:0; color:var(--muted); font-size:.92rem}
 
-  .contact{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
-  .ct{background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:14px; padding:22px; text-align:center}
+  .contact{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(16px,2vw,28px)}
+  .ct{background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:16px; padding:clamp(22px,2.6vw,36px); text-align:center}
   .ct .ic{width:30px; height:30px; margin:0 auto 10px}
   .ct h3{font-family:var(--ff-body); font-weight:700; font-size:1.05rem}
   .ct .v{font-family:var(--ff-num); font-weight:600; color:var(--ember); margin-top:6px; word-break:break-word; font-size:1.02rem}
@@ -151,7 +155,7 @@
     .plans{grid-template-columns:1fr}
     .grid3{grid-template-columns:1fr}
     .contact{grid-template-columns:1fr}
-    .hero{padding:46px 18px 32px}
+    .hero{min-height:0; padding-block:48px 36px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 </style>
@@ -176,9 +180,9 @@
 </header>
 
 <a id="topo"></a>
-<div class="wrap">
-  <section class="hero">
-    <div class="hbg" id="heroBg"></div>
+<section class="hero">
+  <div class="hbg" id="heroBg"></div>
+  <div class="wrap hero-in">
     <img class="sigil" id="heroLogo" alt="">
     <p class="eyebrow">Queime o lixo do seu PC</p>
     <h1>AMATERASU</h1>
@@ -193,11 +197,12 @@
       <span>🛡️ Não mexe nos jogos</span>
       <span>💳 Pagamento via <b>Pix</b></span>
     </div>
-  </section>
-</div>
 
-<div class="wrap">
-  <section id="planos">
+  </div>
+</section>
+
+<section id="planos" class="band">
+  <div class="wrap">
     <div class="sec-head"><p class="eyebrow">Escolha seu plano</p><h2>Dois jeitos de acelerar</h2></div>
     <div class="plans">
       <div class="plan">
@@ -229,11 +234,11 @@
         <button class="btn btn-primary add" data-id="pro">Adicionar ao carrinho</button>
       </div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
-<div class="wrap">
-  <section id="recursos">
+<section id="recursos" class="band alt">
+  <div class="wrap">
     <div class="sec-head"><p class="eyebrow">O que ele faz</p><h2>Mais FPS, menos travada</h2></div>
     <div class="grid3">
       <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h12"/></svg><h3>Limpa o lixo</h3><p>Remove temporários, cache e arquivos inúteis que deixam o PC pesado.</p></div>
@@ -243,11 +248,11 @@
       <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3"/></svg><h3>Inicialização enxuta</h3><p>Controla o que abre junto com o Windows pra ligar mais rápido.</p></div>
       <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><h3>Seguro e reversível</h3><p>Cria ponto de restauração antes. Não toca na configuração dos jogos.</p></div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
-<div class="wrap">
-  <section id="suporte">
+<section id="suporte" class="band">
+  <div class="wrap">
     <div class="sec-head"><p class="eyebrow">Precisa de ajuda?</p><h2>Fale com a gente</h2></div>
     <div class="contact">
       <div class="ct">
@@ -266,8 +271,8 @@
         <div class="v" id="mail">suporte@amaterasu.com.br</div>
       </div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
 <footer>
   <div class="wrap foot">
