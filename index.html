@@ -4,14 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Amaterasu Otimizador</title>
+<link rel="icon" id="favicon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20120%20120%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27e%27%20cx%3D%2750%25%27%20cy%3D%2750%25%27%20r%3D%2760%25%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23ffd6d8%27%2F%3E%3Cstop%20offset%3D%27.45%27%20stop-color%3D%27%23e5383b%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23c1121f%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%27120%27%20height%3D%27120%27%20rx%3D%2726%27%20fill%3D%27%23000%27%2F%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2750%27%20fill%3D%27none%27%20stroke%3D%27url%28%23e%29%27%20stroke-width%3D%276%27%2F%3E%3Cpath%20d%3D%27M16%2060%20C36%2034%2084%2034%20104%2060%20C84%2086%2036%2086%2016%2060%20Z%27%20fill%3D%27none%27%20stroke%3D%27url%28%23e%29%27%20stroke-width%3D%276%27%2F%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2719%27%20fill%3D%27url%28%23e%29%27%2F%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%277%27%20fill%3D%27%23000%27%2F%3E%3C%2Fsvg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Barlow:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap">
 <style>
   /* Layout: loja dark "forja/brasa" — herói com imagem de fundo (trocável), planos lado a lado, recursos, contato, rodapé; carrinho e Pix em overlays */
   :root{
-    --bg:#000000; --bg2:#080404; --surface:#120707; --surface2:#180a0a;
-    --line:#2c0d0d; --fg:#f6ecec; --muted:#b08a8a; --faint:#6f5252;
-    --blood:#fe0a03; --blood-deep:#9c0502; --ember:#ff5a2a; --gold:#f2b14a;
+    --bg:#000000; --bg2:#08080a; --surface:#0f0f12; --surface2:#17171b;
+    --line:#26262c; --fg:#f4f4f6; --muted:#a4a4ad; --faint:#6a6a74;
+    --blood:#c1121f; --blood-deep:#7d0c14; --ember:#e5383b; --gold:#f2b14a;
     --ok:#36c26b;
     --ff-disp:"Cinzel",Georgia,serif; --ff-body:"Barlow",system-ui,sans-serif; --ff-num:"Rajdhani",system-ui,sans-serif;
     color-scheme:dark;
@@ -23,8 +24,8 @@
     margin:0; font-family:var(--ff-body); background:var(--bg); color:var(--fg);
     line-height:1.55; -webkit-font-smoothing:antialiased;
     background-image:
-      radial-gradient(1000px 560px at 78% -12%, rgba(254,10,3,.26), transparent 60%),
-      radial-gradient(760px 520px at -12% 8%, rgba(255,90,42,.10), transparent 55%);
+      radial-gradient(1000px 560px at 78% -12%, rgba(193,18,31,.26), transparent 60%),
+      radial-gradient(760px 520px at -12% 8%, rgba(229,56,59,.10), transparent 55%);
     background-attachment:fixed;
   }
   .wrap{max-width:1680px; width:100%; margin:0 auto; padding-left:max(clamp(18px,4vw,64px),env(safe-area-inset-left,0px)); padding-right:max(clamp(18px,4vw,64px),env(safe-area-inset-right,0px))}
@@ -37,7 +38,7 @@
   header.nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:50; background:rgba(0,0,0,.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
   .nav-in{display:flex; align-items:center; gap:18px; padding-block:12px}
   .brand{display:flex; align-items:center; gap:11px; text-decoration:none; margin-right:auto}
-  .brand .mark{width:42px; height:42px; flex:0 0 auto; object-fit:contain; filter:drop-shadow(0 0 10px rgba(254,10,3,.6))}
+  .brand .mark{width:42px; height:42px; flex:0 0 auto; object-fit:contain; filter:drop-shadow(0 0 10px rgba(193,18,31,.6))}
   .brand b{font-family:var(--ff-disp); font-size:1.25rem; letter-spacing:2px; line-height:1}
   .brand .tx{display:block; line-height:1}
   .brand .tx small{display:block; font-family:var(--ff-num); font-size:.62rem; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-top:3px}
@@ -56,14 +57,14 @@
   .hero-in{width:100%}
   .hero .hbg{position:absolute; inset:0; z-index:-3; background-position:center top; background-size:cover; background-repeat:no-repeat; opacity:.62}
   .hero::after{content:""; position:absolute; inset:0; z-index:-2; background:linear-gradient(180deg, rgba(0,0,0,.5), rgba(0,0,0,.86))}
-  .hero::before{content:""; position:absolute; inset:-30% -20% auto; height:120%; z-index:-1; pointer-events:none; background:radial-gradient(58% 55% at 50% 30%, rgba(254,10,3,.32), rgba(254,10,3,.07) 46%, transparent 72%)}
-  .hero .sigil{width:clamp(110px,12vw,170px); height:clamp(110px,12vw,170px); margin:0 auto 18px; object-fit:contain; filter:drop-shadow(0 0 28px rgba(254,10,3,.7))}
-  .hero h1{font-size:clamp(2.8rem,8vw,7rem); line-height:.98; background:linear-gradient(180deg,#fff, #ffd9c2 40%, var(--ember)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .hero::before{content:""; position:absolute; inset:-30% -20% auto; height:120%; z-index:-1; pointer-events:none; background:radial-gradient(58% 55% at 50% 30%, rgba(193,18,31,.32), rgba(193,18,31,.07) 46%, transparent 72%)}
+  .hero .sigil{width:clamp(110px,12vw,170px); height:clamp(110px,12vw,170px); margin:0 auto 18px; object-fit:contain; filter:drop-shadow(0 0 28px rgba(193,18,31,.7))}
+  .hero h1{font-size:clamp(2.8rem,8vw,7rem); line-height:.98; background:linear-gradient(180deg,#fff, #ffd9dc 40%, var(--ember)); -webkit-background-clip:text; background-clip:text; color:transparent}
   .hero p.lead{max-width:60ch; margin:18px auto 0; color:#e8d5d5; font-size:clamp(1.05rem,1.5vw,1.3rem)}
   .hero .cta{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:30px}
   .hero .btn{padding:15px 28px; font-size:1.05rem}
   .btn{font-family:var(--ff-body); font-weight:700; border-radius:12px; padding:13px 22px; cursor:pointer; border:1px solid transparent; font-size:1rem; text-decoration:none; display:inline-flex; align-items:center; gap:9px}
-  .btn-primary{background:linear-gradient(180deg,var(--blood),var(--blood-deep)); color:#fff; box-shadow:0 10px 30px -10px rgba(254,10,3,.85)}
+  .btn-primary{background:linear-gradient(180deg,var(--blood),var(--blood-deep)); color:#fff; box-shadow:0 10px 30px -10px rgba(193,18,31,.85)}
   .btn-primary:hover{filter:brightness(1.08)}
   .btn-ghost{background:rgba(0,0,0,.35); border-color:var(--line); color:var(--fg)}
   .btn-ghost:hover{border-color:var(--ember); color:var(--ember)}
@@ -77,7 +78,7 @@
 
   .plans{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(20px,3vw,40px)}
   .plan{position:relative; background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:20px; padding:clamp(26px,3vw,44px); display:flex; flex-direction:column}
-  .plan.pro{border-color:var(--blood); box-shadow:0 0 0 1px rgba(254,10,3,.4), 0 20px 50px -24px rgba(254,10,3,.65)}
+  .plan.pro{border-color:var(--blood); box-shadow:0 0 0 1px rgba(193,18,31,.4), 0 20px 50px -24px rgba(193,18,31,.65)}
   .flag{position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:linear-gradient(180deg,var(--ember),var(--blood)); color:#fff; font-family:var(--ff-num); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; font-size:.72rem; padding:5px 14px; border-radius:999px; white-space:nowrap}
   .plan h3{font-size:1.5rem}
   .plan .tag{color:var(--muted); font-size:.92rem; margin:4px 0 16px}
@@ -94,7 +95,7 @@
 
   .grid3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(16px,2vw,28px)}
   .card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:clamp(20px,2.4vw,32px)}
-  .card .ic{width:34px; height:34px; color:var(--ember); margin-bottom:10px}
+  .card .ic{width:34px; height:34px; color:#f1f1f4; margin-bottom:10px}
   .card h3{font-family:var(--ff-body); font-weight:700; font-size:1.06rem; margin-bottom:5px}
   .card p{margin:0; color:var(--muted); font-size:.92rem}
 
@@ -102,12 +103,12 @@
   .ct{background:linear-gradient(180deg,var(--surface),var(--bg2)); border:1px solid var(--line); border-radius:16px; padding:clamp(22px,2.6vw,36px); text-align:center}
   .ct .ic{width:30px; height:30px; margin:0 auto 10px}
   .ct h3{font-family:var(--ff-body); font-weight:700; font-size:1.05rem}
-  .ct .v{font-family:var(--ff-num); font-weight:600; color:var(--ember); margin-top:6px; word-break:break-word; font-size:1.02rem}
+  .ct .v{font-family:var(--ff-num); font-weight:600; color:#f1f1f4; margin-top:6px; word-break:break-word; font-size:1.02rem}
   .ct a.v{text-decoration:none}
 
   footer{border-top:1px solid var(--line); background:var(--bg2); margin-top:30px}
   .foot{display:flex; gap:26px; flex-wrap:wrap; justify-content:space-between; padding-block:34px}
-  .foot .mark{width:38px; height:38px; object-fit:contain; filter:drop-shadow(0 0 8px rgba(254,10,3,.55))}
+  .foot .mark{width:38px; height:38px; object-fit:contain; filter:drop-shadow(0 0 8px rgba(193,18,31,.55))}
   .foot .brand b{font-size:1.1rem}
   .foot p{color:var(--faint); font-size:.86rem; max-width:40ch; margin:10px 0 0}
   .foot nav{display:flex; flex-direction:column; gap:8px}
@@ -150,6 +151,48 @@
   .steps li::before{counter-increment:s; content:counter(s); flex:0 0 auto; width:22px; height:22px; border-radius:999px; background:var(--blood); color:#fff; font-family:var(--ff-num); font-weight:700; font-size:.8rem; display:grid; place-items:center; margin-top:1px}
   .note{background:rgba(242,177,74,.08); border:1px solid rgba(242,177,74,.3); color:var(--gold); border-radius:10px; padding:11px 13px; font-size:.84rem; margin-top:16px}
 
+  /* ===== animacoes: kunais, brasas, chama ===== */
+  .hero-in{position:relative; z-index:1}
+  .emblem{position:relative; width:clamp(250px,26vw,380px); aspect-ratio:1/1; margin:0 auto 6px; display:grid; place-items:center}
+  .emblem .sigil{margin:0; position:relative; z-index:1; animation:pulse 3.4s ease-in-out infinite}
+  .orbit{position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none}
+  .orbit.o1{animation:spin 16s linear infinite; filter:drop-shadow(0 0 6px rgba(193,18,31,.6))}
+  .orbit.o2{animation:spin 48s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{filter:drop-shadow(0 0 22px rgba(193,18,31,.55))}50%{filter:drop-shadow(0 0 42px rgba(229,56,59,.95))}}
+  .hero h1{animation:titleGlow 4s ease-in-out infinite}
+  @keyframes titleGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(193,18,31,.25))}50%{filter:drop-shadow(0 0 28px rgba(193,18,31,.6))}}
+  .flyers{position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0}
+  .fk{position:absolute; width:clamp(90px,9vw,150px); height:auto; opacity:0; filter:drop-shadow(0 0 8px rgba(193,18,31,.5)); will-change:transform}
+  .f1{top:16%; left:0; animation:flyR 10s linear infinite; --dy:60px}
+  .f2{top:62%; left:0; animation:flyR 13s linear infinite 3s; --dy:-80px}
+  .f3{top:34%; right:0; animation:flyL 11s linear infinite 1.5s; --dy:70px}
+  .f4{top:78%; right:0; animation:flyL 15s linear infinite 6s; --dy:-50px}
+  @keyframes flyR{0%{transform:translate3d(-20vw,0,0) rotate(0deg);opacity:0}8%{opacity:.75}92%{opacity:.75}100%{transform:translate3d(115vw,var(--dy),0) rotate(900deg);opacity:0}}
+  @keyframes flyL{0%{transform:translate3d(20vw,0,0) rotate(0deg);opacity:0}8%{opacity:.75}92%{opacity:.75}100%{transform:translate3d(-115vw,var(--dy),0) rotate(-900deg);opacity:0}}
+  .embers{position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none}
+  .flames{position:absolute; left:0; right:0; bottom:0; height:46%; z-index:0; pointer-events:none; transform-origin:50% 100%;
+    background:radial-gradient(55% 100% at 18% 100%, rgba(193,18,31,.38), transparent 70%), radial-gradient(45% 90% at 62% 100%, rgba(125,12,20,.45), transparent 72%), radial-gradient(40% 80% at 92% 100%, rgba(193,18,31,.3), transparent 70%);
+    animation:flicker 3.4s ease-in-out infinite alternate}
+  @keyframes flicker{0%{opacity:.7; transform:scaleY(.94)}50%{opacity:1; transform:scaleY(1.04)}100%{opacity:.8; transform:scaleY(.97)}}
+  .kdiv{display:flex; align-items:center; justify-content:center; gap:14px; margin-top:18px}
+  .kdiv i{display:block; height:1px; width:min(150px,22vw); background:linear-gradient(90deg,transparent,var(--blood))}
+  .kdiv i:last-child{transform:scaleX(-1)}
+  .kdiv svg{width:76px; height:19px; animation:sway 4.5s ease-in-out infinite; filter:drop-shadow(0 0 6px rgba(193,18,31,.5))}
+  @keyframes sway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+  .card{position:relative; overflow:hidden; transition:transform .25s ease,border-color .25s ease}
+  .card::after{content:""; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.07),transparent); transform:skewX(-18deg); transition:left .7s ease; pointer-events:none}
+  .card:hover{transform:translateY(-4px); border-color:#3a3a42}
+  .card:hover::after{left:130%}
+
+  .contact.logos{display:flex; justify-content:center; gap:clamp(16px,3vw,32px)}
+  .ct.logo-only{width:clamp(110px,14vw,150px); aspect-ratio:1/1; display:grid; place-items:center; padding:0; text-decoration:none; transition:transform .25s ease,border-color .25s ease}
+  .ct.logo-only .ic{width:clamp(48px,5vw,64px); height:clamp(48px,5vw,64px); margin:0}
+  .ct.logo-only img.brandimg{width:clamp(48px,5vw,64px); height:clamp(48px,5vw,64px); object-fit:contain; display:block}
+  .ct.logo-only:hover{transform:translateY(-4px); border-color:#3a3a42}
+  .ct.logo-only[aria-disabled="true"]{opacity:.45; cursor:default}
+  .ct.logo-only[aria-disabled="true"]:hover{transform:none; border-color:var(--line)}
+
   @media (max-width:760px){
     nav.links{display:none}
     .plans{grid-template-columns:1fr}
@@ -178,12 +221,40 @@
     </button>
   </div>
 </header>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="kunai" viewBox="0 0 160 40">
+    <defs><linearGradient id="ksteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f2f5"/><stop offset=".5" stop-color="#a9acb5"/><stop offset="1" stop-color="#5d6068"/></linearGradient></defs>
+    <circle cx="13" cy="20" r="10" fill="none" stroke="#b9bcc4" stroke-width="3.2"/>
+    <rect x="23" y="16.5" width="44" height="7" rx="1.5" fill="#1d1d22"/>
+    <path d="M29 16.5l5 7M37 16.5l5 7M45 16.5l5 7M53 16.5l5 7M61 16.5l5 7" stroke="#c1121f" stroke-width="1.4"/>
+    <rect x="66" y="12" width="5" height="16" rx="1.5" fill="#7d8089"/>
+    <path d="M71 20L88 8L155 20L88 32Z" fill="url(#ksteel)"/>
+    <path d="M73 20L153 20" stroke="#4a4d55" stroke-width="1.2"/>
+  </symbol>
+</defs></svg>
 
 <a id="topo"></a>
 <section class="hero">
   <div class="hbg" id="heroBg"></div>
+  <div class="flames" aria-hidden="true"></div>
+  <canvas class="embers" id="embers" aria-hidden="true"></canvas>
+  <div class="flyers" aria-hidden="true">
+    <svg class="fk f1" viewBox="0 0 160 40"><use href="#kunai"/></svg>
+    <svg class="fk f2" viewBox="0 0 160 40"><use href="#kunai"/></svg>
+    <svg class="fk f3" viewBox="0 0 160 40"><use href="#kunai"/></svg>
+    <svg class="fk f4" viewBox="0 0 160 40"><use href="#kunai"/></svg>
+  </div>
   <div class="wrap hero-in">
-    <img class="sigil" id="heroLogo" alt="">
+    <div class="emblem">
+      <svg class="orbit o2" viewBox="0 0 400 400" aria-hidden="true"><circle cx="200" cy="200" r="190" fill="none" stroke="rgba(229,56,59,.45)" stroke-width="2" stroke-dasharray="1 9"/></svg>
+      <svg class="orbit o1" viewBox="0 0 400 400" aria-hidden="true">
+        <circle cx="200" cy="200" r="170" fill="none" stroke="rgba(193,18,31,.4)" stroke-width="1.5"/>
+        <g><use href="#kunai" x="168" y="22" width="64" height="16"/></g>
+        <g transform="rotate(120 200 200)"><use href="#kunai" x="168" y="22" width="64" height="16"/></g>
+        <g transform="rotate(240 200 200)"><use href="#kunai" x="168" y="22" width="64" height="16"/></g>
+      </svg>
+      <img class="sigil" id="heroLogo" alt="">
+    </div>
     <p class="eyebrow">Queime o lixo do seu PC</p>
     <h1>AMATERASU</h1>
     <p class="lead">O otimizador que deixa seu PC leve e destrava FPS nos jogos. Feito para PC fraco — limpa, acelera e prioriza o que importa, sem mexer na configuração dos jogos.</p>
@@ -203,7 +274,7 @@
 
 <section id="planos" class="band">
   <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">Escolha seu plano</p><h2>Dois jeitos de acelerar</h2></div>
+    <div class="sec-head"><p class="eyebrow">Escolha seu plano</p><h2>Dois jeitos de acelerar</h2><div class="kdiv"><i></i><svg viewBox="0 0 160 40" aria-hidden="true"><use href="#kunai"/></svg><i></i></div></div>
     <div class="plans">
       <div class="plan">
         <h3>Básico</h3>
@@ -239,7 +310,7 @@
 
 <section id="recursos" class="band alt">
   <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">O que ele faz</p><h2>Mais FPS, menos travada</h2></div>
+    <div class="sec-head"><p class="eyebrow">O que ele faz</p><h2>Mais FPS, menos travada</h2><div class="kdiv"><i></i><svg viewBox="0 0 160 40" aria-hidden="true"><use href="#kunai"/></svg><i></i></div></div>
     <div class="grid3">
       <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h12"/></svg><h3>Limpa o lixo</h3><p>Remove temporários, cache e arquivos inúteis que deixam o PC pesado.</p></div>
       <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg><h3>Acelera o sistema</h3><p>Plano de energia máximo, efeitos desligados e serviços inúteis cortados.</p></div>
@@ -253,23 +324,14 @@
 
 <section id="suporte" class="band">
   <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">Precisa de ajuda?</p><h2>Fale com a gente</h2></div>
-    <div class="contact">
-      <div class="ct">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path d="M8.5 8.5c0 4 3 7 7 7" stroke-linecap="round"/></svg>
-        <h3>WhatsApp</h3>
-        <a class="v" id="waLink" href="https://wa.me/5532900000000" target="_blank" rel="noopener">+55 32 90000-0000</a>
-      </div>
-      <div class="ct">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#5865F2" stroke-width="2"><path d="M4 5h16c1 0 2 1 2 2v9c0 1-1 2-2 2H8l-4 4V7c0-1 1-2 2-2z"/></svg>
-        <h3>Discord</h3>
-        <a class="v" id="dcLink" href="https://discord.gg/seuservidor" target="_blank" rel="noopener">discord.gg/seuservidor</a>
-      </div>
-      <div class="ct">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#ff5a2a" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
-        <h3>E-mail</h3>
-        <div class="v" id="mail">suporte@amaterasu.com.br</div>
-      </div>
+    <div class="sec-head"><p class="eyebrow">Precisa de ajuda?</p><h2>Fale com a gente</h2><div class="kdiv"><i></i><svg viewBox="0 0 160 40" aria-hidden="true"><use href="#kunai"/></svg><i></i></div></div>
+    <div class="contact logos">
+      <a class="ct logo-only" id="waLink" href="#" aria-label="WhatsApp" title="WhatsApp">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="1.8"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path d="M8.5 8.5c0 4 3 7 7 7" stroke-linecap="round"/></svg>
+      </a>
+      <a class="ct logo-only" id="dcLink" href="https://discord.gg/3V7jMNtcTK" target="_blank" rel="noopener" aria-label="Discord" title="Discord">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#5865F2" stroke-width="1.8"><path d="M4 5h16c1 0 2 1 2 2v9c0 1-1 2-2 2H8l-4 4V7c0-1 1-2 2-2z"/></svg>
+      </a>
     </div>
   </div>
 </section>
@@ -296,7 +358,7 @@
       <a href="#suporte">Privacidade</a>
     </nav>
   </div>
-  <div class="copy">© <span id="yr"></span> Amaterasu Otimizador · Muriaé, MG · Todos os direitos reservados</div>
+  <div class="copy">© <span id="yr"></span> Amaterasu Otimizador · Brasil · Todos os direitos reservados</div>
 </footer>
 
 <div id="cartScrim" class="scrim" hidden></div>
@@ -344,10 +406,11 @@ var BRAND_LOGO = "sharingan.png";   // <-- sua logo (cabeçalho, herói e rodap�
 var HERO_BG    = "itachi.png";      // <-- sua imagem de fundo do topo
 
 /* ===== Pix / produtos (edite se precisar) ===== */
+var WHATSAPP = "";   // seu WhatsApp com DDI+DDD, so numeros. Ex: 5532999998888 (vazio = botao desativado)
 var PIX = {
   chave: "f512f51e-b6e1-4566-b55c-8e351dc5277a", // sua chave Pix (Mercado Pago)
   nome:  "AMATERASU",      // max 25 caracteres, sem acento
-  cidade:"MURIAE"          // max 15 caracteres, sem acento
+  cidade:"BRASIL"          // max 15 caracteres, sem acento
 };
 var PRODUTOS = {
   basico: { nome:"Amaterasu Básico", preco:39.90 },
@@ -358,7 +421,7 @@ var PRODUTOS = {
 var _logoSVG =
 "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>"+
 "<defs><radialGradient id='e' cx='50%' cy='50%' r='60%'>"+
-"<stop offset='0' stop-color='#ffe3b0'/><stop offset='.45' stop-color='#ff5a2a'/><stop offset='1' stop-color='#fe0a03'/>"+
+"<stop offset='0' stop-color='#ffd6d8'/><stop offset='.45' stop-color='#e5383b'/><stop offset='1' stop-color='#c1121f'/>"+
 "</radialGradient></defs>"+
 "<circle cx='60' cy='60' r='54' fill='none' stroke='url(#e)' stroke-width='4'/>"+
 "<path d='M14 60 C36 32 84 32 106 60 C84 88 36 88 14 60 Z' fill='none' stroke='url(#e)' stroke-width='4'/>"+
@@ -375,17 +438,17 @@ var _heroSVG =
 "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'>"+
 "<defs>"+
 "<radialGradient id='g' cx='50%' cy='24%' r='72%'>"+
-"<stop offset='0' stop-color='#fe0a03' stop-opacity='.6'/>"+
+"<stop offset='0' stop-color='#c1121f' stop-opacity='.6'/>"+
 "<stop offset='.4' stop-color='#6a0402' stop-opacity='.4'/>"+
 "<stop offset='1' stop-color='#000' stop-opacity='0'/></radialGradient>"+
 "<linearGradient id='f' x1='0' y1='1' x2='0' y2='0'>"+
-"<stop offset='0' stop-color='#fe0a03'/><stop offset='1' stop-color='#fe0a03' stop-opacity='0'/></linearGradient>"+
+"<stop offset='0' stop-color='#c1121f'/><stop offset='1' stop-color='#c1121f' stop-opacity='0'/></linearGradient>"+
 "</defs>"+
 "<rect width='1200' height='700' fill='#000'/>"+
 "<rect width='1200' height='700' fill='url(#g)'/>"+
 "<path d='M0 700 C150 560 180 630 300 560 C420 500 470 610 600 545 C760 470 790 610 900 560 C1020 515 1090 610 1200 560 L1200 700 Z' fill='url(#f)' opacity='.55'/>"+
 "<path d='M0 700 C120 605 230 655 360 600 C520 540 570 635 720 590 C880 545 970 645 1200 600 L1200 700 Z' fill='#000' opacity='.65'/>"+
-"<g fill='#ff6a33'>"+
+"<g fill='#e5383b'>"+
 "<circle cx='220' cy='300' r='2.6' opacity='.85'/><circle cx='400' cy='220' r='2' opacity='.6'/>"+
 "<circle cx='620' cy='175' r='3' opacity='.75'/><circle cx='820' cy='260' r='2' opacity='.6'/>"+
 "<circle cx='980' cy='205' r='2.6' opacity='.7'/><circle cx='520' cy='345' r='1.8' opacity='.5'/>"+
@@ -405,6 +468,13 @@ function setLogo(id){
   el.src=logoSrc;
 }
 setLogo("brandLogo"); setLogo("heroLogo"); setLogo("footLogo");
+/* icone da aba do navegador: usa a sua logo se existir; senao mantem o icone original */
+(function(){
+  if(!BRAND_LOGO) return;
+  var t=new Image();
+  t.onload=function(){ var l=document.getElementById("favicon"); l.type=""; l.href=BRAND_LOGO; };
+  t.src=BRAND_LOGO;
+})();
 (function(){
   var probe=new Image();
   probe.onload=function(){ document.getElementById("heroBg").style.backgroundImage='url("'+heroSrc+'")'; };
@@ -499,6 +569,54 @@ document.getElementById("copyPix").addEventListener("click", function(){
     navigator.clipboard.writeText(inp.value).then(done, function(){ inp.select(); try{document.execCommand("copy");}catch(e){} done(); });
   } else { inp.select(); try{document.execCommand("copy");}catch(e){} done(); }
 });
+
+/* WhatsApp: so abre quando o numero estiver preenchido */
+(function(){
+  var a=document.getElementById("waLink"); if(!a) return;
+  if(WHATSAPP){ a.href="https://wa.me/"+WHATSAPP; a.target="_blank"; a.rel="noopener"; }
+  else { a.setAttribute("aria-disabled","true"); a.title="WhatsApp em breve"; a.addEventListener("click",function(e){ e.preventDefault(); }); }
+})();
+
+/* logos oficiais (opcional): coloque whatsapp.png e discord.png ao lado do index.html */
+(function(){
+  [["waLink","whatsapp.png"],["dcLink","discord.png"]].forEach(function(p){
+    var a=document.getElementById(p[0]); if(!a) return;
+    var t=new Image();
+    t.onload=function(){
+      var svg=a.querySelector("svg"); if(svg) svg.style.display="none";
+      var im=document.createElement("img"); im.className="brandimg"; im.alt=""; im.src=p[1]; a.appendChild(im);
+    };
+    t.src=p[1];
+  });
+})();
+
+/* ===== brasas subindo no topo (canvas) ===== */
+(function(){
+  var cv=document.getElementById("embers"); if(!cv) return;
+  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var ctx=cv.getContext("2d"), hero=cv.parentNode, W=0, H=0, dpr=Math.min(window.devicePixelRatio||1,2), P=[], run=true, N=0;
+  function size(){ var r=hero.getBoundingClientRect(); W=r.width; H=r.height; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); N=Math.round(Math.min(90,W/16)); }
+  function make(first){ return {x:Math.random()*W, y:first?Math.random()*H:H+10, r:Math.random()*2.2+.6, vy:Math.random()*.9+.35, ph:Math.random()*6.28, sw:Math.random()*.6+.2, a:Math.random()*.6+.3, hot:Math.random()<.25}; }
+  function init(){ size(); P=[]; for(var i=0;i<N;i++) P.push(make(true)); }
+  function frame(){
+    if(run){
+      ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation="lighter";
+      for(var i=0;i<P.length;i++){
+        var p=P[i]; p.y-=p.vy; p.ph+=.02; p.x+=Math.sin(p.ph)*p.sw;
+        if(p.y<-10){ P[i]=make(false); continue; }
+        var al=p.a*Math.min(1,p.y/(H*.7));
+        var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);
+        g.addColorStop(0,p.hot?"rgba(255,170,150,"+al+")":"rgba(229,56,59,"+al+")");
+        g.addColorStop(1,"rgba(193,18,31,0)");
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*4,0,6.283); ctx.fill();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  init(); window.addEventListener("resize",init);
+  if("IntersectionObserver" in window){ new IntersectionObserver(function(e){ run=e[0].isIntersecting; }).observe(hero); }
+  frame();
+})();
 
 document.getElementById("yr").textContent = new Date().getFullYear();
 renderCart();
